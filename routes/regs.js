@@ -21,11 +21,11 @@ router.post('/', async (req, res) => {
     reg = new Reg(_.pick(req.body, ['email', 'password']));
     const salt = await bcrypt.genSalt(10);
     reg.password = await bcrypt.hash(reg.password, salt);
+    const token = reg.generateAuthToken();
+    reg.token = token;
 
     await reg.save();
-
-    const token = reg.generateAuthToken();
-    res.header('x-auth-token', token).send(_.pick(reg, ['_id', 'email']));
+    res.header('x-auth-token', token).send(_.pick(reg, ['_id', 'email', 'token']));
 });
 
 router.get('/', auth, async (req, res) => {
