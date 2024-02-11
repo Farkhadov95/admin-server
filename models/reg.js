@@ -20,6 +20,7 @@ const regSchema = new mongoose.Schema({
     logTime: {
         type: Date,
         required: true,
+        default: Date.now
     },
     regTime: {
         type: Date,

@@ -21,7 +21,6 @@ router.post('/', async (req, res) => {
     reg = new Reg(_.pick(req.body, ['email', 'password']));
     const salt = await bcrypt.genSalt(10);
     reg.password = await bcrypt.hash(reg.password, salt);
-    reg.logTime = '10-11-2023';
 
     await reg.save();
 
