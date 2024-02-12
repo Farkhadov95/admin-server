@@ -33,16 +33,37 @@ router.get('/', auth, async (req, res) => {
     res.send(regs);
 });
 
-router.put('/:id', auth, async (req, res) => {
-    const { error } = validateStatus(req.body);
-    if (error) return res.status(400).send(error.details[0].message);
+// router.put('/:id', auth, async (req, res) => {
+//     const { error } = validateStatus(req.body);
+//     if (error) return res.status(400).send(error.details[0].message);
 
-    const user = await Reg.findByIdAndUpdate(req.params.id, { isActive: req.body.isActive }, {
-        new: true
-    });
+//     const user = await Reg.findByIdAndUpdate(req.params.id, { isActive: req.body.isActive }, {
+//         new: true
+//     });
 
-    if (!user) return res.status(404).send('The user with the given ID was not found.');
-    res.send(user);
+//     if (!user) return res.status(404).send('The user with the given ID was not found.');
+//     res.send(user);
+// });
+
+router.put('/', auth, async (req, res) => {
+    try {
+        const updatedUsers = await Promise.all(req.body.map(async (item) => {
+            const user = await Reg.findByIdAndUpdate(item.id, { isActive: item.isActive }, {
+                new: true
+            });
+            if (!user) return null;
+            return user;
+        }));
+
+        const filteredUsers = updatedUsers.filter(user => user !== null);
+        if (filteredUsers.length === 0) {
+            return res.status(404).send('None of the users with the given IDs were found.');
+        }
+        res.send(filteredUsers);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
+    }
 });
 
 router.delete('/:id', auth, async (req, res) => {
