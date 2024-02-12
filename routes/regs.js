@@ -74,10 +74,8 @@ router.put('/', auth, async (req, res) => {
 
 
 router.delete('/', auth, async (req, res) => {
-    const { ids } = req.body;
-
     try {
-        const deletedUsers = await Promise.all(ids.map(async (id) => {
+        const deletedUsers = await Promise.all(req.body.map(async (id) => {
             const user = await Reg.findByIdAndDelete(id);
             return user;
         }));
