@@ -33,18 +33,6 @@ router.get('/', auth, async (req, res) => {
     res.send(regs);
 });
 
-// router.put('/:id', auth, async (req, res) => {
-//     const { error } = validateStatus(req.body);
-//     if (error) return res.status(400).send(error.details[0].message);
-
-//     const user = await Reg.findByIdAndUpdate(req.params.id, { isActive: req.body.isActive }, {
-//         new: true
-//     });
-
-//     if (!user) return res.status(404).send('The user with the given ID was not found.');
-//     res.send(user);
-// });
-
 router.put('/', auth, async (req, res) => {
     try {
         const updatedUsers = await Promise.all(req.body.map(async (item) => {
@@ -65,13 +53,6 @@ router.put('/', auth, async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 });
-
-// router.delete('/:id', auth, async (req, res) => {
-//     const user = await Reg.findByIdAndDelete(req.params.id);
-//     if (!user) return res.status(404).send('The user with the given ID was not found.');
-//     res.send(user);
-// });
-
 
 router.delete('/', auth, async (req, res) => {
     try {
