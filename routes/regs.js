@@ -48,7 +48,7 @@ router.get('/', auth, async (req, res) => {
 router.put('/', auth, async (req, res) => {
     try {
         const updatedUsers = await Promise.all(req.body.map(async (item) => {
-            const user = await Reg.findByIdAndUpdate(item.id, { isActive: item.isActive }, {
+            const user = await Reg.findByIdAndUpdate(item._id, { isActive: item.isActive }, {
                 new: true
             });
             if (!user) return null;
