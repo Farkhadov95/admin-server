@@ -66,10 +66,33 @@ router.put('/', auth, async (req, res) => {
     }
 });
 
-router.delete('/:id', auth, async (req, res) => {
-    const user = await Reg.findByIdAndDelete(req.params.id);
-    if (!user) return res.status(404).send('The user with the given ID was not found.');
-    res.send(user);
+// router.delete('/:id', auth, async (req, res) => {
+//     const user = await Reg.findByIdAndDelete(req.params.id);
+//     if (!user) return res.status(404).send('The user with the given ID was not found.');
+//     res.send(user);
+// });
+
+
+router.delete('/', auth, async (req, res) => {
+    const { ids } = req.body;
+
+    try {
+        const deletedUsers = await Promise.all(ids.map(async (id) => {
+            const user = await Reg.findByIdAndDelete(id);
+            return user;
+        }));
+
+        const filteredDeletedUsers = deletedUsers.filter(user => user !== null);
+
+        if (filteredDeletedUsers.length === 0) {
+            return res.status(404).send('None of the users with the given IDs were found.');
+        }
+
+        res.send(filteredDeletedUsers);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
+    }
 });
 
 module.exports = router;
