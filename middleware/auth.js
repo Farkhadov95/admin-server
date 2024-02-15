@@ -8,7 +8,9 @@ module.exports = async function auth(req, res, next) {
     if (!token) return res.status(401).send('Access denied. No token provided.');
 
     let currentUser = await Reg.findOne({ email: currentUserEmail });
-    if (!currentUser.isActive) return res.status(400).send('User account is not active');
+    if (!currentUser.isActive) return res.status(400).send('Access denied. This account is blocked');
+    if (!currentUser) return res.status(400).send('Access denied');
+
 
     try {
         const decoded = jwt.verify(token, config.get('jwtPrivateKey'));
