@@ -1,9 +1,14 @@
 const jwt = require('jsonwebtoken');
 const config = require('config');
+const { Reg } = require('../models/reg');
 
-module.exports = function auth(req, res, next) {
+module.exports = async function auth(req, res, next) {
     const token = req.header('x-auth-token');
+    const currentUserEmail = req.header('current-user-email');
     if (!token) return res.status(401).send('Access denied. No token provided.');
+
+    let currentUser = await Reg.findOne({ email: currentUserEmail });
+    if (!currentUser.isActive) return res.status(400).send('User account is not active');
 
     try {
         const decoded = jwt.verify(token, config.get('jwtPrivateKey'));
