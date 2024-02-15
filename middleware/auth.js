@@ -11,7 +11,6 @@ module.exports = async function auth(req, res, next) {
     if (!currentUser.isActive) return res.status(400).send('Access denied. This account is blocked');
     if (!currentUser) return res.status(400).send('Access denied');
 
-
     try {
         const decoded = jwt.verify(token, config.get('jwtPrivateKey'));
         req.user = decoded;
